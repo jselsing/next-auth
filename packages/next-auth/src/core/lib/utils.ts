@@ -1,5 +1,11 @@
 import { createHash } from "crypto"
 
+import {
+  CognitoIdentityClient,
+  GetIdCommand,
+  GetCredentialsForIdentityCommand,
+} from "@aws-sdk/client-cognito-identity";
+
 import type { AuthOptions } from "../.."
 import type { InternalOptions } from "../types"
 import type { InternalUrl } from "../../utils/parse-url"
@@ -41,4 +47,39 @@ export function createSecret(params: {
       .update(JSON.stringify({ ...url, ...authOptions }))
       .digest("hex")
   )
+}
+
+const cognitoClient = new CognitoIdentityClient({ region: process.env.REGION as string });
+  
+export async function getAWSCreds(token: string) {
+
+  const logins = `cognito-idp.${process.env.REGION}.amazonaws.com/${process.env.COGNITO_USER_POOL_ID}`
+
+  const idResponse = await cognitoClient.send(
+    new GetIdCommand({
+      IdentityPoolId: process.env.COGNITO_IDENTITY_POOL_ID as string,
+      Logins: {
+        [logins]: token
+    }
+    })
+  );
+  const { IdentityId } = idResponse;
+  
+
+  const credentialsResponse = await cognitoClient.send(
+    new GetCredentialsForIdentityCommand({
+      IdentityId,
+      Logins: {
+        [logins]: token
+    }
+    })
+  );
+
+  return credentialsResponse;
+}
+
+export interface awsCreds {
+  access_key?: string;
+  secret_access_key?: string;
+  session_token?: string;
 }

@@ -1,6 +1,6 @@
 import oAuthCallback from "../lib/oauth/callback"
 import callbackHandler from "../lib/callback-handler"
-import { hashToken } from "../lib/utils"
+import { hashToken, getAWSCreds, awsCreds } from "../lib/utils"
 import getAdapterUserFromEmail from "../lib/email/getUserFromEmail"
 
 import type { InternalOptions } from "../types"
@@ -54,6 +54,50 @@ export default async function callback(params: {
 
       if (oauthCookies.length) cookies.push(...oauthCookies)
 
+
+      try {
+
+        const credentials = await getAWSCreds(account.id_token)
+        cookies.push({
+          name: "aws.identity_id",
+          value: credentials.IdentityId.split(":")[1],
+          options: {
+            ...options.cookies.sessionToken.options,
+            expires: credentials.CredentialsExpiration,
+          }
+        })
+        cookies.push({
+          name: "aws.access_key",
+          value: credentials.Credentials.AccessKeyId,
+          options: {
+            ...options.cookies.sessionToken.options,
+            expires: credentials.CredentialsExpiration,
+          }
+        })
+        cookies.push({
+          name: "aws.secret_key",
+          value: credentials.Credentials.SecretKey,
+          options: {
+            ...options.cookies.sessionToken.options,
+            expires: credentials.CredentialsExpiration,
+          }
+        })
+        cookies.push({
+          name: "aws.session_token",
+          value: credentials.Credentials.SessionToken,
+          options: {
+            ...options.cookies.sessionToken.options,
+            expires: credentials.CredentialsExpiration,
+          }
+        })
+
+      } catch (error) {
+        console.error(error)
+      }
+
+
+
+
       try {
         // Make it easier to debug when adding a new provider
         logger.debug("OAUTH_CALLBACK_RESPONSE", {
@@ -80,11 +124,17 @@ export default async function callback(params: {
         // (that just means it's a new user signing in for the first time).
         let userOrProfile = profile
         if (adapter) {
+          // This is a hacky fix to setup the db session during callback
+          const credentials = await getAWSCreds(account.id_token)
+          const creds: awsCreds = {
+            access_key: credentials.Credentials.AccessKeyId,
+            secret_access_key:   credentials.Credentials.SecretKey,
+            session_token: credentials.Credentials.SessionToken}
           const { getUserByAccount } = adapter
           const userByAccount = await getUserByAccount({
             providerAccountId: account.providerAccountId,
             provider: provider.id,
-          })
+          }, creds)
 
           if (userByAccount) userOrProfile = userByAccount
         }

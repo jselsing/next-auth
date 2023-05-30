@@ -413,6 +413,10 @@ export interface CookiesOptions {
   pkceCodeVerifier: CookieOption
   state: CookieOption
   nonce: CookieOption
+  AWSAccessKey: CookieOption
+  AWSSecretKey: CookieOption
+  AWSSessionToken: CookieOption
+  AWSIdentityID:  CookieOption
 }
 
 /**

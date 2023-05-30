@@ -1,5 +1,11 @@
 import { Account, User, Awaitable } from "."
 
+export interface awsCreds {
+  access_key?: string;
+  secret_access_key?: string;
+  session_token?: string;
+}
+
 export interface AdapterUser extends User {
   id: string
   email: string
@@ -82,7 +88,8 @@ export interface DefaultAdapter {
   getUserByEmail: (email: string) => Awaitable<AdapterUser | null>
   /** Using the provider id and the id of the user for a specific account, get the user. */
   getUserByAccount: (
-    providerAccountId: Pick<AdapterAccount, "provider" | "providerAccountId">
+    providerAccountId: Pick<AdapterAccount, "provider" | "providerAccountId">,
+    creds?: awsCreds, 
   ) => Awaitable<AdapterUser | null>
   updateUser: (user: Partial<AdapterUser> & Pick<AdapterUser, 'id'>) => Awaitable<AdapterUser>
   /** @todo Implement */

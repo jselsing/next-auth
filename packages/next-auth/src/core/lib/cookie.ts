@@ -114,6 +114,42 @@ export function defaultCookies(useSecureCookies: boolean): CookiesOptions {
         path: "/",
         secure: useSecureCookies,
       },
+    },
+    AWSAccessKey: {
+      name: `${cookiePrefix}aws.access_key`,
+      options: {
+        httpOnly: true,
+        sameSite: "lax",
+        path: "/",
+        secure: useSecureCookies,
+      },
+    },
+    AWSSecretKey: {
+      name: `${cookiePrefix}aws.secret_key`,
+      options: {
+        httpOnly: true,
+        sameSite: "lax",
+        path: "/",
+        secure: useSecureCookies,
+      },
+    },
+    AWSSessionToken: {
+      name: `${cookiePrefix}aws.session_token`,
+      options: {
+        httpOnly: true,
+        sameSite: "lax",
+        path: "/",
+        secure: useSecureCookies,
+      },
+    },
+    AWSIdentityID: {
+      name: `${cookiePrefix}aws.identity_id`,
+      options: {
+        httpOnly: true,
+        sameSite: "lax",
+        path: "/",
+        secure: useSecureCookies,
+      },
     }
   }
 }

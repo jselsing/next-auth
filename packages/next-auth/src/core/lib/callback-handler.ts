@@ -32,7 +32,7 @@ export default async function callbackHandler(params: {
     throw new Error("Missing or invalid provider account")
   if (!["email", "oauth"].includes(account.type))
     throw new Error("Provider not supported")
-
+  
   const {
     adapter,
     jwt,
