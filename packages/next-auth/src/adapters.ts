@@ -83,7 +83,7 @@ export type Adapter<WithVerificationToken = boolean> = DefaultAdapter &
     : {})
 
 export interface DefaultAdapter {
-  createUser: (user: Omit<AdapterUser, "id">) => Awaitable<AdapterUser>
+  createUser: (user: Omit<AdapterUser, "id">, id: string | undefined) => Awaitable<AdapterUser>
   getUser: (id: string) => Awaitable<AdapterUser | null>
   getUserByEmail: (email: string) => Awaitable<AdapterUser | null>
   /** Using the provider id and the id of the user for a specific account, get the user. */

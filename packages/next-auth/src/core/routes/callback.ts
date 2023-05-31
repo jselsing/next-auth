@@ -165,6 +165,7 @@ export default async function callback(params: {
           profile,
           account,
           options,
+          token: account.id_token,
         })
 
         if (useJwtSession) {

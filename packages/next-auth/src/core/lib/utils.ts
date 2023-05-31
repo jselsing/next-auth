@@ -51,7 +51,7 @@ export function createSecret(params: {
 
 const cognitoClient = new CognitoIdentityClient({ region: process.env.REGION as string });
   
-export async function getAWSCreds(token: string) {
+export async function getAWSCreds(token: string | undefined) {
 
   const logins = `cognito-idp.${process.env.REGION}.amazonaws.com/${process.env.COGNITO_USER_POOL_ID}`
 
